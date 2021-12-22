@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dien_trach_farm/screens/KTV/qlqt/qlqt_screen.dart';
+import 'package:flutter_dien_trach_farm/screens/QLV/qlv_home_screen.dart';
 import 'package:flutter_dien_trach_farm/screens/login_screen/login_screen.dart';
 import 'package:get/get.dart';
-
 import 'screens/KTV/qlqt/qlqt_add_screen.dart';
 
 void main() {
@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const QLQTAddScreen(),
+      home: const QLVHome(),
     );
   }
 }

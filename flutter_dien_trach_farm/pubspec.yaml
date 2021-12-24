@@ -27,6 +27,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  image_picker: ^0.8.4+4
   flutter:
     sdk: flutter
 
@@ -80,6 +81,7 @@ flutter:
     - assets/farmer.png
     - assets/field.png
     - assets/smart-farm.png
+    - assets/people.png
     
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/assets-and-images/#from-packages

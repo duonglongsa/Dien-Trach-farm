@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 
 import 'screens/KTV/qlqt/quytrinh_view/qlqt_view_screen.dart';
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -34,6 +35,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: const LoginScreen(),
+
     );
   }
 }

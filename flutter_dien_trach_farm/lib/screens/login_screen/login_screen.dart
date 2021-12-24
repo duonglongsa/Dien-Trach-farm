@@ -5,6 +5,8 @@ import 'package:flutter_dien_trach_farm/main.dart';
 import 'package:flutter_dien_trach_farm/screens/KTV/home_screen/ktv_home_screen.dart';
 import 'package:get/get.dart';
 
+import 'login_controller.dart';
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
@@ -13,9 +15,11 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  String dropdownValue = "Kỹ thuật viên";
+  final LoginController loginController = Get.put(LoginController());
+
   @override
   Widget build(BuildContext context) {
+    loginController.scaffoldContext = context;
     return SafeArea(
       child: Scaffold(
         body: GestureDetector(
@@ -35,11 +39,20 @@ class _LoginScreenState extends State<LoginScreen> {
                     width: 200,
                     height: 200,
                   ),
-                  _loginForm(
+                  _usernameForm(
                     title: "Tên đăng nhập",
-                    isObscure: false,
+                    usernameController: loginController.usernameController,
                   ),
-                  _loginForm(title: "Mật khẩu", isObscure: true),
+                  GetBuilder<LoginController>(
+                    builder: (loginController) {
+                      return _passwordForm(
+                        title: "Mật khẩu", 
+                        isObscure: loginController.isObscure,
+                        passwordController: loginController.passwordController,
+                        onObscureTap: loginController.onObscureTap,
+                      );
+                    }
+                  ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                     child: Column(
@@ -64,12 +77,12 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: DropdownButton<String>(
                                 isDense: true,
                                 isExpanded: true,
-                                value: dropdownValue,
+                                value: loginController.role,
                                 elevation: 16,
                                 style: const TextStyle(color: Colors.black),
                                 onChanged: (String? newValue) {
                                   setState(() {
-                                    dropdownValue = newValue!;
+                                    loginController.role = newValue!;
                                   });
                                 },
                                 items: <String>[
@@ -102,7 +115,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               )),
                         ),
-                        const SizedBox(height: 20,),
+                        const SizedBox(
+                          height: 20,
+                        ),
                         Material(
                           borderRadius: BorderRadius.circular(30.0),
                           elevation: 5.0,
@@ -114,11 +129,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             child: TextButton(
                               style: TextButton.styleFrom(
-                                minimumSize: Size.fromHeight(0),
+                                minimumSize: const Size.fromHeight(0),
                               ),
-                              onPressed: () {
-                                Get.to(() => const KTVHome());
-                              },
+                              onPressed: () => loginController.login(),
                               child: const Text(
                                 "Đăng nhập",
                                 style: TextStyle(
@@ -142,9 +155,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
-Widget _loginForm({
+Widget _usernameForm({
   required String title,
-  required bool isObscure,
+  required TextEditingController usernameController
 }) {
   return Padding(
     padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
@@ -165,14 +178,92 @@ Widget _loginForm({
           elevation: 5.0,
           shadowColor: mainGreenColor,
           child: TextFormField(
-            obscureText: isObscure,
-            onChanged: (value) {},
+            controller: usernameController,
             keyboardType: TextInputType.name,
             style: const TextStyle(
               color: Colors.black,
               fontFamily: 'OpenSans',
             ),
             decoration: loginFormDecoration,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _passwordForm({
+  required String title,
+  required bool isObscure,
+  required TextEditingController passwordController,
+  required VoidCallback onObscureTap
+}) {
+  return Padding(
+    padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          title,
+          style: TextStyle(
+            color: greyTextColor,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'OpenSans',
+          ),
+        ),
+        const SizedBox(height: 10.0),
+        Material(
+          borderRadius: BorderRadius.circular(30.0),
+          elevation: 5.0,
+          shadowColor: mainGreenColor,
+          child: TextFormField(
+            controller: passwordController,
+            obscureText: isObscure,
+            keyboardType: TextInputType.name,
+            style: const TextStyle(
+              color: Colors.black,
+              fontFamily: 'OpenSans',
+            ),
+            decoration: InputDecoration(
+              suffixIcon: IconButton(
+                icon: Icon(
+                  isObscure?Icons.remove_red_eye_outlined:Icons.remove_red_eye,
+                  color: greyTextColor,
+                ),
+                onPressed: () => onObscureTap(),
+              ),
+              errorStyle: kErrorStyle,
+              fillColor: Colors.white24,
+              filled: true,
+              contentPadding: const EdgeInsets.fromLTRB(20.0, 14.0, 20.0, 0),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
+                borderSide: BorderSide(
+                  width: 1.0,
+                  color: mainGreenColor,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
+                borderSide: BorderSide(
+                  width: 1.0,
+                  color: mainGreenColor,
+                ),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
+                borderSide: const BorderSide(
+                  color: Colors.red,
+                  width: 1.0,
+                ),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
+                borderSide: const BorderSide(
+                  color: Colors.red,
+                  width: 1.0,
+                ),
+              )),
           ),
         ),
       ],

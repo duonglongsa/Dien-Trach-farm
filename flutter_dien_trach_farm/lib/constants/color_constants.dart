@@ -2,6 +2,9 @@ import 'package:flutter/cupertino.dart';
 
 Color mainGreenColor = const Color(0xFF01A560);
 Color greyTextColor = const Color(0xFF5C5C5C);
+Color cancelRedColor = const Color(0xFFD7443B);
+
+
 
 Color qlvCardColor = const Color(0xFF289768);
 Color qlmvCardColor = const Color(0xFF975D28);

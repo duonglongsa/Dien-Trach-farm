@@ -1,11 +1,15 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dien_trach_farm/screens/KTV/qlqt/qlqt_screen.dart';
-import 'package:flutter_dien_trach_farm/screens/QLV/qlv_home_screen.dart';
+import 'package:flutter_dien_trach_farm/screens/KTV/qlqt/quytrinh_list/qlqt_screen.dart';
 import 'package:flutter_dien_trach_farm/screens/login_screen/login_screen.dart';
 import 'package:get/get.dart';
-import 'screens/KTV/qlqt/qlqt_add_screen.dart';
 
-void main() {
+import 'screens/KTV/qlqt/quytrinh_view/qlqt_view_screen.dart';
+
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -30,7 +34,8 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const QLVHome(),
+      home: const LoginScreen(),
+
     );
   }
 }

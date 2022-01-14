@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dien_trach_farm/constants/color_constants.dart';
 import 'package:flutter_dien_trach_farm/screens/QLV/qlv_list_works.dart';
-import 'package:get/get.dart';
 
 class QLVHome extends StatefulWidget {
   const QLVHome({Key? key}) : super(key: key);
@@ -40,7 +39,6 @@ class _KTVHomeState extends State<QLVHome>  {
               itemCount: 20,
               itemBuilder: (context, index){
                 return _gardentCard(context: context, index: index);
-
               }),
         ),
     );

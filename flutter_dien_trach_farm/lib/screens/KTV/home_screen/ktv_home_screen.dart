@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dien_trach_farm/constants/color_constants.dart';
+import 'package:get/get.dart';
+
+import 'ktv_home_controller.dart';
 
 class KTVHome extends StatefulWidget {
   const KTVHome({Key? key}) : super(key: key);
@@ -9,6 +12,8 @@ class KTVHome extends StatefulWidget {
 }
 
 class _KTVHomeState extends State<KTVHome> {
+  final KTVHomeController ktvHomeController = Get.put(KTVHomeController());
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -34,25 +39,26 @@ class _KTVHomeState extends State<KTVHome> {
                           height: 30,
                         ),
                         _managmentCard(
-                          assetImage: const AssetImage("assets/field.png"),
-                          title: "Quản lý vườn",
-                          cardColor: qlvCardColor,
-                        ),
+                            assetImage: const AssetImage("assets/field.png"),
+                            title: "Quản lý vườn",
+                            cardColor: qlvCardColor,
+                            onCardTap: ktvHomeController.onQLQTTap),
                         _managmentCard(
-                          assetImage: const AssetImage("assets/shovels.png"),
-                          title: "Quản lý mùa vụ",
-                          cardColor: qlmvCardColor,
-                        ),
+                            assetImage: const AssetImage("assets/shovels.png"),
+                            title: "Quản lý mùa vụ",
+                            cardColor: qlmvCardColor,
+                            onCardTap: ktvHomeController.onQLQTTap),
                         _managmentCard(
-                          assetImage: const AssetImage("assets/smart-farm.png"),
-                          title: "Quản lý quy trình",
-                          cardColor: qlqtCardColor,
-                        ),
+                            assetImage:
+                                const AssetImage("assets/smart-farm.png"),
+                            title: "Quản lý quy trình",
+                            cardColor: qlqtCardColor,
+                            onCardTap: ktvHomeController.onQLQTTap),
                         _managmentCard(
-                          assetImage: const AssetImage("assets/farmer.png"),
-                          title: "Quản lý nhân công",
-                          cardColor: qlncCardColor,
-                        ),
+                            assetImage: const AssetImage("assets/farmer.png"),
+                            title: "Quản lý nhân công",
+                            cardColor: qlncCardColor,
+                            onCardTap: ktvHomeController.onQLQTTap),
                       ],
                     ),
                   ),
@@ -70,6 +76,7 @@ Widget _managmentCard({
   required AssetImage assetImage,
   required String title,
   required Color cardColor,
+  required VoidCallback onCardTap,
 }) {
   return Card(
     margin: const EdgeInsets.all(10),
@@ -79,23 +86,26 @@ Widget _managmentCard({
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(25.0),
     ),
-    child: Padding(
-      padding: const EdgeInsets.only(left: 15),
-      child: Container(
-        alignment: Alignment.center,
-        height: 100,
-        child: ListTile(
-          leading: Image(
-            image: assetImage,
-          ),
-          title: Padding(
-            padding: const EdgeInsets.only(left: 20),
-            child: Text(
-              title,
-              style: const TextStyle(
-                color: Color(0xFFE5E5E5),
-                fontSize: 20,
-                fontWeight: FontWeight.bold
+    child: InkWell(
+      onTap: () => onCardTap(),
+      borderRadius: BorderRadius.circular(25.0),
+      child: Padding(
+        padding: const EdgeInsets.only(left: 15),
+        child: Container(
+          alignment: Alignment.center,
+          height: 100,
+          child: ListTile(
+            leading: Image(
+              image: assetImage,
+            ),
+            title: Padding(
+              padding: const EdgeInsets.only(left: 20),
+              child: Text(
+                title,
+                style: const TextStyle(
+                    color: Color(0xFFE5E5E5),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
               ),
             ),
           ),

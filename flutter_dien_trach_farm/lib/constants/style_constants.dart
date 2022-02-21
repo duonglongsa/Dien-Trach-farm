@@ -111,11 +111,19 @@ final loginFormDecoration = InputDecoration(
 );
 
 final normalFormDecoration = InputDecoration(
+
     errorStyle: kErrorStyle,
     fillColor: Colors.white24,
     filled: true,
     contentPadding: const EdgeInsets.fromLTRB(20.0, 14.0, 20.0, 0),
     enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10.0),
+      borderSide: BorderSide(
+        width: 1.0,
+        color: mainGreenColor,
+      ),
+    ),
+    disabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(10.0),
       borderSide: BorderSide(
         width: 1.0,
@@ -157,12 +165,18 @@ final passwordInputDecoration = InputDecoration(
     ),
     hintText: 'Enter Password',
     hintStyle: kHintTextStyle,
-    enabledBorder: OutlineInputBorder(
+    disabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(10.0),
       borderSide: const BorderSide(
         width: 0.0,
       ),
     ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10.0),
+      borderSide: const BorderSide(
+        width: 0.0,
+      ),
+    ),   
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(10.0),
       borderSide: const BorderSide(

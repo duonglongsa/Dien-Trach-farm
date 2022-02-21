@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "921613716925",
+    "project_id": "dien-trach-farm",
+    "storage_bucket": "dien-trach-farm.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:921613716925:android:9d5cb6a9390e8e92a4d6d4",
+        "android_client_info": {
+          "package_name": "com.example.flutter_dien_trach_farm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "921613716925-qjtltsk76dugqvtqearrvjglugoubd70.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfR0yTpZOEemR5jx16l4y3m8J4YfBBLAw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "921613716925-qjtltsk76dugqvtqearrvjglugoubd70.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

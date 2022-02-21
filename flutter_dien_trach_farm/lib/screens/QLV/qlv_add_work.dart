@@ -1,14 +1,20 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_dien_trach_farm/constants/color_constants.dart';
 import 'package:flutter_dien_trach_farm/constants/style_constants.dart';
+import 'package:flutter_dien_trach_farm/screens/QLV/qlv_farmers_name.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'dart:async' show Future;
+import 'qlv_show_full_image.dart';
+
+import 'package:simple_autocomplete_formfield/simple_autocomplete_formfield.dart';
+
 
 class QLVAddWorks extends StatefulWidget{
   const QLVAddWorks({Key? key}) : super(key: key);
-
   @override
   State<QLVAddWorks> createState() => _QLVAddWorksState();
 
@@ -44,40 +50,45 @@ class _QLVAddWorksState extends State<QLVAddWorks>{
     );
   }
   // Image Picker
+  final ImagePicker _picker = ImagePicker();
+  List<XFile> _imageList =[];
+  var search = false;
+
   PickedFile? imageFile=null;
   // Get from gallery
   void _openGallery(BuildContext context) async{
-    final pickedFile = await ImagePicker().getImage(
-      source: ImageSource.gallery ,
-      maxHeight: 250,
-      maxWidth: 300
+    final List <XFile>? pickedFiles = await _picker.pickMultiImage(
     );
-    setState(() {
-      imageFile = pickedFile!;
-    });
-
+    if (pickedFiles!.isNotEmpty){
+      _imageList.addAll(pickedFiles);
+    }
+    setState((){});
     Navigator.pop(context);
   }
 
   // Get from Camera
   void _openCamera(BuildContext context)  async{
-    final pickedFile = await ImagePicker().getImage(
-      source: ImageSource.camera ,
-        maxHeight: 250,
-        maxWidth: 300
+    final XFile? pickedFile = await _picker.pickImage(
+      source: ImageSource.camera
     );
-    setState(() {
-      imageFile = pickedFile!;
-    });
+    if (pickedFile!.path.isNotEmpty){
+      _imageList.add(pickedFile);
+    }
+    setState((){});
     Navigator.pop(context);
   }
 
+
+  List<String> _ListNameOfFarmer = [];// Danh sách tên của người thực hiện công việc
   // List Name
   final _nameControler = TextEditingController(); // TextField Người thực hiện
+  //Suggestion list farmer name
+  final suggestionListName = lsFarmerSuggestion;
+
+  // Alert dialog
+  Farmer? selectedFarmer;
   @override
   Widget build(BuildContext context) {
-
-    BuildContext context1;
     // TODO: implement build
     return SafeArea(
         child:  Scaffold(
@@ -181,23 +192,62 @@ class _QLVAddWorksState extends State<QLVAddWorks>{
                           borderRadius: BorderRadius.circular(10.0),
                           elevation: 5.0,
                           shadowColor: mainGreenColor,
-                          child: TextField(
+                          child: SimpleAutocompleteFormField<Farmer>(
+                            controller: _nameControler,
                             decoration: normalFormDecoration,
-                            controller: _nameControler ,
-                            onEditingComplete: (){
-                                setState(() {
-                                  _ListNameOfFarmer.add(_nameControler.text.toString());
-                                  _nameControler.text ='';
-                                });
-                                print(_ListNameOfFarmer);
+                            suggestionsHeight: 80.0,
+                            itemBuilder: (context, f) => Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                Text(f!.name)
+                              ]),
+                            ),
+                            onSearch: (search) async => suggestionListName.where((f)=>
+                                f.name.toLowerCase().contains(search.toLowerCase())).toList(),
+                            itemFromString: (string) {
+                              final matches = suggestionListName.where((f) => f.name.toLowerCase() == string.toLowerCase());
+                              return matches.isEmpty ? null : matches.first;
                             },
-                          ),
-                        )
-                      ])
+                            onChanged: (value) => setState(() => selectedFarmer = value),
+                            onSaved: (value) => setState(() => selectedFarmer = value),
+                            validator: (f) => f == null ? 'Invalid person.' : null,
+                            onFieldSubmitted:(value){
+                              setState(() {
+                                for(Farmer farmer in suggestionListName){
+                                  if (farmer.name == value.toString()){
+                                    search = true;
+                                    break;
+                                  }else{
+                                    search = false;
+                                  }
+                                  //_ListNameOfFarmer.add(_nameControler.text.toString());
+                                }
+                                if(search == true){
+                                  _ListNameOfFarmer.add(_nameControler.text.toString());
+                                  _nameControler.text = '';
+                                }else{
+                                  final snackBar = SnackBar(
+                                    content: const Text('Không tìm thấy tên này!'),
+                                    duration: const Duration(seconds: 3),
+                                    // action: SnackBarAction(
+                                    //   label: 'Đồng ý',
+                                    //   onPressed: () {
+                                    //     // _ListNameOfFarmer.add(_nameControler.text.toString());
+                                    //     // _nameControler.text = '';
+                                    //   },
+                                    // ),
+                                  );
+                                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                                }
+                              });
+                            }
+                            ),
+                        ),
+                      ]),
               ),
                    Wrap(
                        children: _ListNameOfFarmer.map((eachName){
-                         return _farmerCard(eachName);
+                         return _farmerCard(eachName, _ListNameOfFarmer.indexOf(eachName));
                        }).toList(),
                    ),
 
@@ -269,7 +319,19 @@ class _QLVAddWorksState extends State<QLVAddWorks>{
                               )
                             ])
                     ),
-                   _imageResult(imageFile),
+                   Container(
+                     child: _imageList.isEmpty ? Center(child: SizedBox()):
+                     GridView.builder(
+                            shrinkWrap: true,
+                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount:3),
+                            itemCount: _imageList.length,
+                            itemBuilder: (BuildContext context, int index){
+                                return _imageResult(_imageList[index], index);
+                              }),
+                   ),
+
+
                    Row(
                        mainAxisAlignment: MainAxisAlignment.center,
                        children: [
@@ -312,8 +374,79 @@ class _QLVAddWorksState extends State<QLVAddWorks>{
         ),
     );
   }
-}
+  Widget _farmerCard(var NameOfFarmer, int index){
+    return Padding(
+        padding: const EdgeInsets.only(left: 5),
+        child: Container(
+            child: Card(
+              margin: const EdgeInsets.all(10),
+              color: qlvNameCardColor,
+              elevation: 5,
+              shadowColor: Colors.black,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(25.0),
+              ),
+              child:
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(padding: EdgeInsets.only(left: 10),
+                    child: Image(image: AssetImage("assets/people.png"),
+                      height: 20,
+                      width: 20,
+                    ),),
+                  Padding(
+                    padding: EdgeInsets.only(left: 10, right: 10),
+                    child: Text(NameOfFarmer, style: TextStyle(color: Color(0xFF5C5C5C))),
+                  ),
+                  Container(
+                      height: 18.0,
+                      width: 18.0,
+                      child: IconButton(
+                        padding: new EdgeInsets.all(0.0),
+                        icon: new Icon(Icons.clear, size: 15.0),
+                        color: Color(0xFF5C5C5C),
+                        onPressed: () {
+                          setState(() {
+                            _ListNameOfFarmer.removeAt(index);
+                          });
+                        },
+                      )
+                  )
+                ],
+              ),)
+        )
+    );
+  }
+  // Thông báo khi thêm một nông dân
 
+  Widget _imageResult(var imageFile, int index){
+    return GestureDetector(
+      onTap: (){
+        Navigator.of(context).push(MaterialPageRoute(builder:(context) => ShowFullImages(imageResultFull: imageFile)));
+      },
+      child: Card(
+          child: (Stack(children: <Widget>[
+            Image.file(File(imageFile!.path), width: 270, height: 200, fit: BoxFit.cover,),
+            Positioned(
+              top: -5,
+              right:-5,
+              child:IconButton(
+                icon:Icon(Icons.close, size: 22,color: Colors.black45),
+                splashColor: Colors.blue.withAlpha(30),
+                onPressed: (){
+                  setState(() {
+                    _imageList.removeAt(index);
+                  });
+                },
+              ),
+            )
+          ],)
+          )),
+    );
+
+  }
+}
 Widget _addWorkTextField({@required text}) {
   return  Padding(
         padding: EdgeInsets.only(right: 40, left: 15, top: 20),
@@ -335,76 +468,11 @@ Widget _addWorkTextField({@required text}) {
                )
             ])
   );
-}
-Widget _imageResult(var imageFile){
-  return Center(
-    child:(imageFile==null)? Text("") :
-   Card(
-       child: (Stack(children: <Widget>[
-         Image.file(File(imageFile!.path), width: 270, height: 200, fit: BoxFit.cover,),
-         Positioned(
-            top: -5,
-            right:-5,
-            child:IconButton(
-                icon:Icon(Icons.close, size: 22,color: Colors.white),
-                splashColor: Colors.blue.withAlpha(30),
-                onPressed: (){
-                  print("remove image");
-                  imageFile = null;
 
-                },
-              ),
-
-            )
-
-      ],)
-  )));
 
 }
 
 
-List<String> _ListNameOfFarmer = [];
 
-Widget _farmerCard(var NameOfFarmer){
 
-  return Padding(
-      padding: const EdgeInsets.only(left: 5),
-      child: Container(
-          child: Card(
-            margin: const EdgeInsets.all(10),
-            color: qlvNameCardColor,
-            elevation: 5,
-            shadowColor: Colors.black,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(25.0),
-            ),
-            child:
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(padding: EdgeInsets.only(left: 10),
-                child: Image(image: AssetImage("assets/people.png"),
-                  height: 20,
-                  width: 20,
-                ),),
-                Padding(
-                  padding: EdgeInsets.only(left: 10, right: 10),
-                  child: Text(NameOfFarmer, style: TextStyle(color: Color(0xFF5C5C5C))),
-                ),
-                Container(
-                    height: 18.0,
-                    width: 18.0,
-                    child: IconButton(
-                      padding: new EdgeInsets.all(0.0),
-                      icon: new Icon(Icons.clear, size: 15.0),
-                      color: Color(0xFF5C5C5C),
-                      onPressed: (){
-                        print('delete Farmer');
-                      },
-                    )
-                )
-              ],
-            ),)
-    )
-  );
-}
+
